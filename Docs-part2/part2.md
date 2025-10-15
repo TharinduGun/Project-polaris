@@ -14,7 +14,7 @@ This document details the architecture for the Project Polaris RAG application, 
 
 ### Class Structure
 
-
+![Class structure design ](classdesign.png)
 
 
 
@@ -31,13 +31,13 @@ This document details the architecture for the Project Polaris RAG application, 
 
 Prompt engineering directly affects the quality and safety of RAG answers. The following principles guided the template design:
 
-* **System Prompt**: The system message instructs the model that it is a "helpful consultant" who must answer **only from the provided context**. It warns the model to respond with “I cannot answer based on the given documents” if the answer is not contained. This mitigates hallucinations and encourages the LLM to admit when information is missing. The prompt also instructs the model to cite source IDs for transparency.
+* **System Prompt**: The system message instructs the model that it is a "helpful consultant" who must answer **only from the provided context**. It warns the model to respond with “I cannot answer based on the given documents” if the answer is not contained. This reduces hallucinations and make the LLM to telol when information is missing. The prompt also instructs the model to cite source IDs for more transparencyu of the answer.
 
 * **Context Injection**: Retrieved chunks are concatenated with a clear header (e.g., `Context:`) and separated by blank lines. Each chunk is prefixed with its source ID (e.g., `document.pdf#chunk3`) to allow the model to provide citations in the answer.
 
 * **Question/Answer Separation**: After the context, the prompt includes a `Question:` followed by the user’s query and ends with `Answer:` to clearly demarcate the expected completion.
 
-* **Temperature and Model Selection**: A low **temperature (0–0.1)** is used for factual QA to reduce randomness. For summarisation, a slightly higher temperature can produce more varied summaries. The underlying model can be **GPT-3.5 Turbo** for cost-efficiency or **GPT-4** for higher quality. Recent benchmarks show that open-source Llama-2 70B models achieve similar factual consistency to GPT-4 (81.7% vs. 85.5%) but GPT-4 still leads in overall scores and longer context handling. The firm can evaluate both; for this prototype we default to GPT-3.5 Turbo and allow switching to GPT-4 via configuration.
+* **Temperature and Model Selection**: A low **temperature (0–0.1)** is used for factual QA to reduce randomness. For summarisation, a slightly higher temperature can produce more varied summaries. The underlying model can be **GPT-3.5 Turbo** for cost-efficiency or **GPT-4** & **GPT-5** for higher quality. Other model like Gemin2.5 has shown good benchmarks for summarization as well
 
 ---
 
