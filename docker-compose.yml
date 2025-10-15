@@ -1,0 +1,51 @@
+version: "3.8"
+
+services:
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: n8n
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    environment:
+      # n8n basics
+      - N8N_BASIC_AUTH_ACTIVE=false
+      # Make OpenAI + Weaviate available to your workflow nodes via {{$env.*}}
+      - OPENAI_API_KEY=OPENAI_API_KEY=${OPENAI_API_KEY}
+      - WEAVIATE_URL=http://weaviate:8080
+      # If Weaviate has auth, set this; otherwise leave it empty
+      - WEAVIATE_API_KEY=
+      # Optional timezone (helps with scheduling/logs)
+      - TZ=Asia/Colombo
+    volumes:
+      # On Windows keep this; on Linux/macOS replace with: ~/.n8n:/home/node/.n8n
+      - ${USERPROFILE}\.n8n:/home/node/.n8n
+    depends_on:
+      - weaviate
+    networks:
+      - ragnet
+
+  weaviate:
+    image: cr.weaviate.io/semitechnologies/weaviate:latest
+    container_name: weaviate
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      QUERY_DEFAULTS_LIMIT: "25"
+      AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: "true"  # set to "false" if you add auth
+      PERSISTENCE_DATA_PATH: "/var/lib/weaviate"
+      DEFAULT_VECTORIZER_MODULE: "none"                # we send our own vectors
+      ENABLE_MODULES: ""                               # no modules needed
+      CLUSTER_HOSTNAME: "node1"
+    volumes:
+      - weaviate_data:/var/lib/weaviate
+    networks:
+      - ragnet
+
+volumes:
+  weaviate_data:
+
+networks:
+  ragnet:
+    driver: bridge

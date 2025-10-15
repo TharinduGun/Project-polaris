@@ -1,0 +1,8 @@
+fastapi
+uvicorn[standard]
+python-dotenv
+weaviate-client>=4.6.0
+langchain
+langchain-community
+openai>=1.40.0
+tenacity

@@ -1,0 +1,1 @@
+This is a simple rag application tried to implement for RAG in langchain and using weaviate 
